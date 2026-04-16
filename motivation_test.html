@@ -104,13 +104,9 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 .option-btn:active { transform: scale(0.99); }
-.option-btn.selected-yes {
-  background: #E1F5EE;
-  border-color: #5DCAA5;
-}
-.option-btn.selected-no {
-  background: #FAECE7;
-  border-color: #F0997B;
+.option-btn.selected {
+  background: #EEEDFE;
+  border-color: #7F77DD;
 }
 .radio-circle {
   width: 18px;
@@ -125,13 +121,9 @@ body {
   transition: all 0.15s ease;
   flex-shrink: 0;
 }
-.radio-circle.active-yes {
-  border-color: #0F6E56;
-  background: #0F6E56;
-}
-.radio-circle.active-no {
-  border-color: #993C1D;
-  background: #993C1D;
+.radio-circle.active {
+  border-color: #534AB7;
+  background: #534AB7;
 }
 .radio-dot {
   width: 6px;
@@ -181,14 +173,15 @@ body {
   margin-bottom: 10px;
 }
 .result-header h1 {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 400;
-  line-height: 1.3;
-  margin-bottom: 8px;
+  line-height: 1.25;
+  margin-bottom: 10px;
 }
 .result-header .sub {
   font-size: 14px;
   font-style: italic;
+  line-height: 1.5;
 }
 .result-box {
   padding: 1.5rem;
@@ -270,7 +263,7 @@ body {
   .question-num { font-size: 28px; width: 24px; }
   .options { padding-left: 38px; }
   .option-btn { font-size: 13px; padding: 12px 14px; }
-  .result-header h1 { font-size: 20px; }
+  .result-header h1 { font-size: 22px; }
 }
 </style>
 </head>
@@ -322,24 +315,24 @@ const questions = [
 ];
 
 const profiles = {
-  A: {
-    title: "Профиль А: развитая саморегуляция",
-    subtitle: "ИИ-инструменты будут для вас эффективны",
-    color: "#0F6E56",
-    bg: "#E1F5EE",
-    border: "#5DCAA5",
+  navigator: {
+    title: "Штурман",
+    subtitle: "Вы видите свой курс и умеете корректировать его сами",
+    color: "#185FA5",
+    bg: "#E6F1FB",
+    border: "#378ADD",
     items: [
-      { text: "Используйте ИИ для структурированной рефлексии и самооценивания \u2014 данные показывают связь с улучшением мотивации и самооценки компетентности.", src: "[Хейдарнеджад, 2025]" },
+      { text: "Используйте ИИ как второго штурмана: для структурированной рефлексии и самооценивания \u2014 данные показывают связь с улучшением мотивации и самооценки компетентности.", src: "[Хейдарнеджад, 2025]" },
       { text: "Расширяйте репертуар стратегий: мета-анализы выделяют повышение ценности задачи и управление интересом как наиболее адаптивные.", src: "[Фонг и соавт., 2025]" },
       { text: "Вы можете быть peer-ментором для других \u2014 воспринимаемая поддержка сверстников запускает стратегии мотивационной регуляции, усиливая и вашу собственную.", src: "[Вильяр и соавт., 2025]" }
     ]
   },
-  B: {
-    title: "Профиль Б: саморегуляция в развитии",
-    subtitle: "Начинайте с социального контекста, не с технологии",
-    color: "#993C1D",
-    bg: "#FAECE7",
-    border: "#F0997B",
+  explorer: {
+    title: "Путник",
+    subtitle: "Вы в начале пути \u2014 и это абсолютно нормально. Саморегуляция \u2014 навык, а не талант",
+    color: "#534AB7",
+    bg: "#EEEDFE",
+    border: "#7F77DD",
     items: [
       { text: "Ищите социальный контекст: peer support, учебный партнёр, малая группа \u2014 воспринимаемая поддержка сверстников запускает конкретные стратегии мотивационной регуляции.", src: "[Вильяр и соавт., 2025]" },
       { text: "Первый шаг \u2014 обеспечить опыт успешного совладания со спадом в поддерживающих условиях: самоэффективность растёт через опыт, не через инструкцию.", src: "[Крышко и соавт., 2022]" },
@@ -384,8 +377,8 @@ function render() {
 
     q.options.forEach((opt, oi) => {
       const sel = answers[q.id] === opt.value;
-      const selClass = sel ? (opt.value ? "selected-yes" : "selected-no") : "";
-      const circleClass = sel ? (opt.value ? "active-yes" : "active-no") : "";
+      const selClass = sel ? "selected" : "";
+      const circleClass = sel ? "active" : "";
       html += `<button class="option-btn ${selClass}" onclick="selectAnswer(${q.id}, ${opt.value})">
         <span class="radio-circle ${circleClass}">${sel ? '<span class="radio-dot"></span>' : ""}</span>
         <span>${opt.text}</span>
@@ -408,7 +401,7 @@ function selectAnswer(qId, val) {
 
 function showResult() {
   const trueCount = Object.values(answers).filter(v => v === true).length;
-  const p = trueCount >= 3 ? profiles.A : profiles.B;
+  const p = trueCount >= 3 ? profiles.navigator : profiles.explorer;
   const app = document.getElementById("app");
 
   let recs = "";
@@ -422,9 +415,9 @@ function showResult() {
   app.innerHTML = `
     <div class="result-container">
       <div class="result-header">
-        <div class="label">результат диагностики</div>
+        <div class="label">ваш профиль</div>
         <h1 style="color:${p.color}">${p.title}</h1>
-        <div class="sub" style="color:${p.color}88">${p.subtitle}</div>
+        <div class="sub" style="color:${p.color}">${p.subtitle}</div>
       </div>
 
       <div class="result-box" style="background:${p.bg};border-left-color:${p.border}">
